@@ -5,7 +5,7 @@ https://innoitsa.or.kr/itsa/lms/atnlcReqst/reception.do?menuNo=700003&processCdA
 <br>
 
 
-## git 주소 :    https://github.com/digicope/ai_vibe_1102
+## git 주소 :    https://github.com/digicope/ai_vibe1102
 <br>
 
 
