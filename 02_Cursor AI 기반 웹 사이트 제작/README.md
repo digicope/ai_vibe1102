@@ -12,11 +12,8 @@ npm install --omit=dev
 cd C:\Users\storm\.cursor\extensions\lambda0x63.ftp-mini-0.4.1-universal
 npm install --omit=dev
 
-그다음 [View] -->[명령 팔레트]에서 Developer: Reload Window를 입력하고
+그런 다음 커서 메뉴의 [View] --> [명령 팔레트]에서 Developer: Reload Window를 입력하고
 다시 FTP Mini: 연결 설정을 실행하세요.(이 부분은 교재 참조)
 
-
-cd C:\Users\storm\.cursor\extensions\lambda0x63.ftp-mini-0.4.1-universal
-npm install --omit=dev
 ```
 
