@@ -2,7 +2,10 @@
 
 프로젝트명 폴더명 :  AI_Agent_PDF_Search_Project
 
-다음 요구사항을 모두 충족하는 전체 프로젝트를 생성해줘.
+※ 이 질의문은 Cursor AI 채팅에 붙여 넣어 사용하는 예제이다.
+※ 생성되는 코드는 OpenAI GPT-4o-mini(모델명: gpt-4o-mini)를 사용한다.
+
+Cursor AI에서 OpenAI GPT-4o-mini를 사용하는 예제로, 다음 요구사항을 모두 충족하는 전체 프로젝트를 생성해줘.
 
 ============================================================
 📌 프로젝트 목표
@@ -19,11 +22,16 @@ LangChain PDF 로더를 사용해 문서 → 임베딩 → 벡터스토어 생�
 **지능형 PDF 검색·질의응답 Agent 시스템**을 생성하라.
 
 LangChain 의 create_agent() 최신 스타일을 반드시 사용하라.
+채팅 모델은 OpenAI GPT-4o-mini(model="openai:gpt-4o-mini")를 사용하라.
+임베딩은 OpenAI text-embedding-3-small을 사용하라.
 에이전트 결과는 result["messages"][-1].content 로 읽도록 구현하라.
 
 환경 변수는 반드시 다음과 같이 로드한다:
 from dotenv import load_dotenv  
 load_dotenv()
+
+.env 예시:
+OPENAI_API_KEY=발급받은_OpenAI_API_키
 
 ============================================================
 📁 프로젝트 파일 구조 생성
@@ -40,6 +48,7 @@ AI_Agent_PDF_Search_Project/
 
 
 위 파일들을 모두 생성할 것.
+requirements.txt에는 langchain-openai, openai 를 포함할 것.
 
 ============================================================
 📄 PDF 처리 요구 사항
@@ -50,6 +59,7 @@ AI_Agent_PDF_Search_Project/
 2) 현재 소스 경로아래 pdf_data/ 폴더에 있는 모든 PDF 로딩 후 chunking/LangChain TextSplitter 적용
 
 3) 생성된 문서 전체를 벡터스토어(FAISS 또는 Chroma)로 인덱싱
+   - 임베딩 모델은 OpenAI text-embedding-3-small
 
 4) 벡터스토어를 디스크에 저장하고,
    다음 실행에서는 이미 저장된 벡터스토어가 존재하면 다시 생성하지 말고 읽어올 것
@@ -59,6 +69,7 @@ AI_Agent_PDF_Search_Project/
    vector_store = FAISS.load_local("vector_store/", embeddings)
 
 5) PDF 문서별 대표 키워드를 자동 생성하여 주제 분류에 활용할 것
+   - 키워드 생성 모델은 OpenAI GPT-4o-mini
 
 6) 주제별 문서 그룹핑(topic → 문서 목록) 기능 구현
 
@@ -78,13 +89,14 @@ Streamlit UI(app.py)에서 다음 기능을 제공하라:
    - 사용자가 직접 선택한 주제에 대해서만 벡터 검색을 수행
 
 4) Agent는 LangChain create_agent() 사용
+   모델은 OpenAI GPT-4o-mini
 
 예시 create_agent() 구조:
 ------------------------------------------------------------
 from langchain.agents import create_agent
 
 agent = create_agent(
-    model="gemini-3.5-flash",
+    model="openai:gpt-4o-mini",
     tools=[search_vectorstore, list_topics, select_topic],
     system_prompt="너는 PDF 통합 지능형 검색 Agent이다."
 )
@@ -94,6 +106,8 @@ result = agent.invoke({
         {"role": "user", "content": "기후 변화가 에너지 정책에 미치는 영향은?"}
     ]
 })
+
+print(result["messages"][-1].content)
 ------------------------------------------------------------
 
 5) Agent는 검색 결과 요약 + 근거 제공 형식으로 답변할 것
@@ -113,12 +127,14 @@ result = agent.invoke({
    - 특정 topic_id 또는
    - agent가 자동 판단한 topic_id  
    에 해당하는 vectorstore에서 similarity_search 수행
+   - 검색 임베딩은 OpenAI text-embedding-3-small
 
 4) summarize_docs  
-   - 검색된 문서 chunk들을 통합 요약
+   - 검색된 문서 chunk들을 OpenAI GPT-4o-mini로 통합 요약
 
 에이전트는 create_agent()로 구성하며  
 system_prompt에 “PDF 통합 지능형 검색 Agent” 역할을 명확히 정의한다.
+model 인자는 "openai:gpt-4o-mini" 로 고정한다.
 
 ============================================================
 📘 README 요구 사항
@@ -128,10 +144,12 @@ README.md에는 다음을 포함:
 - 프로젝트 설명
 - PDF 처리 파이프라인
 - 주제 분류 방식
-- LangChain create_agent() 설명
+- LangChain create_agent() 설명 (모델: openai:gpt-4o-mini)
+- OpenAI 임베딩(text-embedding-3-small) 설명
 - Streamlit 실행 방법
 - 벡터스토어 저장/재사용 방법
 - Windows 폴더 경로 주의사항(C:/env/.env)
+- .env 의 OPENAI_API_KEY 설정 방법
 
 
 이 프롬프트 전체를 반영하여 전체 프로젝트를 자동 생성하라.
@@ -142,9 +160,11 @@ streamlit run app.py
 
 [추가 질의-1]
 주제 목록에서 주제 하나를 선택 클릭하면 핵심 키워드 목록과 질의문 예시 5개, 문서 출처등을 출력하게 해줘
+키워드와 예시 질문은 OpenAI GPT-4o-mini(openai:gpt-4o-mini)로 생성해줘
 
 [추가 질의-2]
 질의에 대한 답변 결과 외에 “근거가 된 원문 문장”, “참조한 PDF 파일명”, “해당 문서의 어느 페이지인지” 까지 자동으로 출력해줘
+답변 모델은 OpenAI GPT-4o-mini를 유지해줘
 
 [추가 질의-3]
 PDF 문서 수가 많아도 안정적으로 시각화할 수 있는 
@@ -154,6 +174,7 @@ PDF 문서 수가 많아도 안정적으로 시각화할 수 있는
 1) 문서 전체가 아닌 “주제(클러스터) 레벨” 관계 그래프를 먼저 생성한다.
    - 예: Cluster 0, Cluster 1, Cluster 2 …
    - 주제 간 유사도 기반으로 노드·링크 그래프 생성
+   - 유사도 계산 임베딩은 OpenAI text-embedding-3-small
 
 2) Streamlit UI에는 먼저 주제 관계 그래프를 이미지 형태로 출력한다.
    - NetworkX 등으로 생성 → 이미지로 저장 → st.image()로 표시
@@ -182,6 +203,7 @@ PDF 주제 관계 그래프를 더 지능적으로 표현할 수 있도록
 
 3) 주제 노드 아래에 대표 키워드 2~3개 표시
    - 각 클러스터 문서로부터 공통 키워드 자동 추출
+   - 키워드 추출은 OpenAI GPT-4o-mini로 수행
    - 예시:
        스마트시티 네트워크
        · IoT  · 센서 · 클라우드

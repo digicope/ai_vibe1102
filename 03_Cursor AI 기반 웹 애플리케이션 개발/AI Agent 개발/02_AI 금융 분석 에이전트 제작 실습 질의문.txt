@@ -2,7 +2,10 @@
 
 프로젝트 폴더명 : AI_Agent_Finance_Project
 
-Gemini API와 LangChain0을 사용하여 "AI 금융 분석 · 리스크 평가 · 투자 리포트 자동 생성 에이전트" 프로젝트 전부를 만들어줘.
+※ 이 질의문은 Cursor AI 채팅에 붙여 넣어 사용하는 예제이다.
+※ 생성되는 코드는 OpenAI GPT-4o-mini(모델명: gpt-4o-mini)를 사용한다.
+
+Cursor AI에서 OpenAI GPT-4o-mini와 LangChain을 사용하여 "AI 금융 분석 · 리스크 평가 · 투자 리포트 자동 생성 에이전트" 프로젝트 전부를 만들어줘.
 아래 요구사항을 모두 충족하는 완성형 프로젝트 코드를 생성해줘.
 
 ------------------------------------------------------------
@@ -17,12 +20,13 @@ Gemini API와 LangChain0을 사용하여 "AI 금융 분석 · 리스크 평가 �
   을 수행하는 AI 금융 분석 Agent를 만든다.
 
 - 사용자가 기업의 재무 이미지(재무제표 캡처 등)를 업로드하면  
-  Vision API로 분석하여 텍스트 데이터로 추출하고 종합 분석에 반영한다.
+  OpenAI GPT-4o-mini 비전으로 분석하여 텍스트 데이터로 추출하고 종합 분석에 반영한다.
 
 - DuckDuckGo 또는 Yahoo Finance 검색 API를 Tool로 연결해  
   실시간 시장 정보·뉴스를 검색하고 에이전트가 자동 호출하도록 구성한다.
 
 - 모든 기능은 LangChain의 create_agent() 기반으로 통합한다.
+- 채팅 모델은 OpenAI GPT-4o-mini(model="openai:gpt-4o-mini")만 사용한다.
 
 ------------------------------------------------------------
 2. 기능 요구사항
@@ -44,12 +48,13 @@ Gemini API와 LangChain0을 사용하여 "AI 금융 분석 · 리스크 평가 �
 - 시장 리스크, 산업 리스크, 재무 리스크(부채, 유동성 등)  
 - 요약 형태의 분석 내용 생성
 
-[5] Vision 기반 재무제표 분석 Tool  
-- 업로드된 이미지에서 숫자와 표 구조를 추출  
+[5] 비전 기반 재무제표 분석 Tool  
+- 업로드된 이미지를 OpenAI GPT-4o-mini 비전으로 분석해 숫자와 표 구조를 추출  
 - 재무 분석에 반영
 
 [6] RAG 기능 (선택적으로 기본적인 DB 구축)  
 - 산업 리서치 문서 / 투자 가이드 문서를 RAG로 검색 가능하게 구성  
+- 임베딩은 OpenAI text-embedding-3-small
 - Chroma/FAISS 중 하나 선택해서 구축
 
 [7] 투자 리포트 자동 생성  
@@ -61,6 +66,7 @@ Gemini API와 LangChain0을 사용하여 "AI 금융 분석 · 리스크 평가 �
   · 투자 의견(중립/매수/매도)  
   · 종합 결론  
 - 마크다운 템플릿 기반으로 출력
+- 리포트 문장 생성은 OpenAI GPT-4o-mini로 수행
 
 [8] Streamlit UI  
 - 기업/티커 입력  
@@ -74,18 +80,22 @@ Gemini API와 LangChain0을 사용하여 "AI 금융 분석 · 리스크 평가 �
 - 전체 프로젝트 파일 구조 자동 생성
 - 각 기능을 tools/ 모듈로 분리
 - create_agent() 사용, system_prompt 포함
-- .env 활용(GeminiI API Key)
+- .env 활용(OPENAI_API_KEY)
 - 환경 변수는 .env 파일을 다음과 같이 불러오기 :  load_dotenv()
+- .env 예시
+  OPENAI_API_KEY=발급받은_OpenAI_API_키
 - 재사용 가능하도록 함수 분리 + Vibe 코딩 스타일의 고품질 코드
 - 그래프는 matplotlib 또는 plotly 중 선택
 - 예외 처리 및 에러 로그 포함
+- 의존성에는 langchain-openai, openai 를 포함한다
 
--create_agent() 사용을 아래 소스와 같은 LangChain 최신 스타일로 수정해줘
+-create_agent() 사용을 아래 소스와 같은 LangChain 최신 스타일로 작성해줘.
+ 모델은 OpenAI GPT-4o-mini를 사용한다.
 
 from langchain.agents import create_agent
 
 agent = create_agent(
-    model="gemini-3.8-flash",
+    model="openai:gpt-4o-mini",
     tools=[search_web, analyze_data, send_email],
     system_prompt="You are a helpful research assistant."
 )
@@ -166,7 +176,7 @@ DuckDuckGo 검색을 사용해서 날씨나 LLM이 답할수 없는 질문 내�
 AI Agent를 만들어줘. DDGS_Chat이라는 폴더를 만들고 여기에 소스를 구현해줘
 DDGS가 검색한 사이트를 출력해줘
 DDGS가 하나만 검색하지 말고 3개정도를 검색해서 RAG로 사용할수 있도록 수정해줘.
-
-
-
+답변 생성 모델은 OpenAI GPT-4o-mini(openai:gpt-4o-mini),
+임베딩은 OpenAI text-embedding-3-small,
+API 키는 .env의 OPENAI_API_KEY를 load_dotenv()로 불러와 사용해줘.
 
