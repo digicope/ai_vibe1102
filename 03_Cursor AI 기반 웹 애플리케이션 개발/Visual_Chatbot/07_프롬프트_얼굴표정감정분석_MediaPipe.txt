@@ -1,31 +1,31 @@
-[Antigravity 바이브 코딩 프롬프트]
+[Cursor AI 바이브 코딩 프롬프트]
 
-역할: 너는 파이썬 Flask + MediaPipe Face Mesh + Gemini 웹앱을 처음부터 완성하는 시니어 개발자다.
-목표: 웹캠 얼굴 랜드마크로 감정을 규칙 기반으로 판정하고, 그 감정에 공감하는 Gemini 대화를 보여주는 웹앱을 만들어라.
+역할: 너는 Cursor에서 파이썬 Flask + MediaPipe Face Mesh + OpenAI gpt-4o-mini 웹앱을 처음부터 완성하는 시니어 개발자다.
+목표: 웹캠 얼굴 랜드마크로 감정을 규칙 기반으로 판정하고, 그 감정에 공감하는 gpt-4o-mini 대화를 보여주는 웹앱을 만들어라.
 실행 환경: Windows, Python 3.11, 기본 웹캠(index 0), http://127.0.0.1:5000
 
 ==================================================
 1) 반드시 지킬 API / 환경변수 규칙
 ==================================================
-- 모델은 반드시 gemini-3.5-flash 만 사용한다.
+- 모델은 반드시 gpt-4o-mini 만 사용한다.
 - API 키는 코드에 하드코딩하지 말고 아래처럼 읽는다.
 
 from dotenv import load_dotenv
 import os
-from google import genai
+from openai import OpenAI
 
 load_dotenv(r"C:\env\.env")
-API_KEY = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=API_KEY)
+API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=API_KEY)
 
-response = client.models.generate_content(
-    model="gemini-3.5-flash",
-    contents=[
-        "너는 감정을 이해하고 공감하는 따뜻한 대화 전문가야. 한국어로 답해.",
-        f"사용자가 {emotion}한 감정 상태이다. 이 감정에 맞게 공감하는 대화를 해줘."
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "너는 감정을 이해하고 공감하는 따뜻한 대화 전문가야. 한국어로 답해."},
+        {"role": "user", "content": f"사용자가 {emotion}한 감정 상태이다. 이 감정에 맞게 공감하는 대화를 해줘."}
     ]
 )
-ai_message = response.text
+ai_message = response.choices[0].message.content
 
 ==================================================
 2) 기능 요구사항
@@ -55,7 +55,7 @@ A. emotion_detector.py
 B. app.py
 - /video_feed 에서 매 프레임 detect_emotion 호출 후 MJPEG 전송
 - GET  /current_emotion  → { "emotion": "happy" }
-- POST /get_response JSON { "emotion": "happy" } → Gemini 공감 대화 { "response": "..." }
+- POST /get_response JSON { "emotion": "happy" } → gpt-4o-mini 공감 대화 { "response": "..." }
 
 ==================================================
 3) UI (templates/index.html)
@@ -72,12 +72,12 @@ B. app.py
 app.py
 emotion_detector.py
 templates/index.html
-requirements.txt   (flask, python-dotenv, google-genai, opencv-python, mediapipe, numpy)
+requirements.txt   (flask, python-dotenv, openai, opencv-python, mediapipe, numpy)
 README.md
 
 ==================================================
 5) 제약
 ==================================================
 - debug=False, port=5000
-- Gemini 실패 시 JSON 에러, 스트리밍은 유지
+- gpt-4o-mini 실패 시 JSON 에러, 스트리밍은 유지
 - 완성된 실행 가능한 코드만 작성하고, 지금 바로 전체 파일을 생성하라.

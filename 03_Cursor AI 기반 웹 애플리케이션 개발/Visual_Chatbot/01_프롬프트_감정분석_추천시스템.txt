@@ -1,29 +1,31 @@
-[Antigravity 바이브 코딩 프롬프트]
+[Cursor AI 바이브 코딩 프롬프트]
 
-역할: 너는 파이썬 Flask 웹앱을 처음부터 완성하는 시니어 개발자다.
-목표: 사용자가 입력한 문장의 감정을 Gemini로 분석하고, SQLite에 저장된 추천(음악/영화/뉴스)을 보여주는 웹 서비스를 만들어라.
+역할: 너는 Cursor에서 파이썬 Flask 웹앱을 처음부터 완성하는 시니어 개발자다.
+목표: 사용자가 입력한 문장의 감정을 OpenAI gpt-4o-mini로 분석하고, SQLite에 저장된 추천(음악/영화/뉴스)을 보여주는 웹 서비스를 만들어라.
 실행 환경: Windows, Python 3.11, 브라우저에서 http://127.0.0.1:5000 접속.
 
 ==================================================
 1) 반드시 지킬 API / 환경변수 규칙
 ==================================================
-- 모델은 반드시 gemini-3.5-flash 만 사용한다.
+- 모델은 반드시 gpt-4o-mini 만 사용한다.
 - API 키는 코드에 하드코딩하지 말고 아래처럼 읽는다.
 
 from dotenv import load_dotenv
 import os
-from google import genai
+from openai import OpenAI
 
 load_dotenv(r"C:\env\.env")
-API_KEY = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=API_KEY)
+API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=API_KEY)
 
 텍스트 생성 예시:
-response = client.models.generate_content(
-    model="gemini-3.5-flash",
-    contents=prompt
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": prompt}
+    ]
 )
-text = response.text.strip()
+text = response.choices[0].message.content.strip()
 
 ==================================================
 2) 기능 요구사항
@@ -61,7 +63,7 @@ text = response.text.strip()
    relaxed / news: 스트레스 완화법, 요가/명상 인기, 도시 녹지 확대, 디지털 디톡스, 원격근무와 정신건강
 
 2. 감정 분석 함수 analyze_sentiment(text)
-   - Gemini에게 다음 지시를 보낸다.
+   - gpt-4o-mini에게 다음 지시를 보낸다.
      "다음 문장의 감정을 분석해서 happy, sad, angry, relaxed 중에서 하나의 단어로만 말해줘"
    - 응답에서 소문자 영단어 하나만 추출해 반환한다. (설명문 금지)
 
@@ -93,7 +95,7 @@ text = response.text.strip()
 ==================================================
 app.py
 templates/index.html
-requirements.txt   (flask, python-dotenv, google-genai)
+requirements.txt   (flask, python-dotenv, openai)
 README.md          (실행 방법: pip install -r requirements.txt 후 python app.py)
 
 ==================================================

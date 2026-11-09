@@ -1,28 +1,30 @@
-[Antigravity 바이브 코딩 프롬프트]
+[Cursor AI 바이브 코딩 프롬프트]
 
-역할: 너는 파이썬 Flask + MediaPipe Hands + Gemini 스마트 조명 컨트롤러 웹앱을 처음부터 완성하는 시니어 개발자다.
-목표: 손 제스처(주먹/손바닥/V자)로 가상 조명 상태(OFF/ON/MOOD)를 바꾸고, 상태가 바뀔 때 Gemini가 짧은 인삿말을 만들게 하라.
+역할: 너는 Cursor에서 파이썬 Flask + MediaPipe Hands + OpenAI gpt-4o-mini 스마트 조명 컨트롤러 웹앱을 처음부터 완성하는 시니어 개발자다.
+목표: 손 제스처(주먹/손바닥/V자)로 가상 조명 상태(OFF/ON/MOOD)를 바꾸고, 상태가 바뀔 때 gpt-4o-mini가 짧은 인삿말을 만들게 하라.
 실행 환경: Windows, Python 3.11, 기본 웹캠(index 0), 한글 폰트 C:/Windows/Fonts/malgun.ttf
 
 ==================================================
 1) 반드시 지킬 API / 환경변수 규칙
 ==================================================
-- 모델은 반드시 gemini-3.5-flash 만 사용한다.
+- 모델은 반드시 gpt-4o-mini 만 사용한다.
 - API 키는 코드에 하드코딩하지 말고 아래처럼 읽는다.
 
 from dotenv import load_dotenv
 import os
-from google import genai
+from openai import OpenAI
 
 load_dotenv(r"C:\env\.env")
-API_KEY = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=API_KEY)
+API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=API_KEY)
 
-response = client.models.generate_content(
-    model="gemini-3.5-flash",
-    contents=f"조명 상태가 '{status}'입니다. 사용자를 위한 짧은 한국어 한 문장의 인삿말을 만들어줘."
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": f"조명 상태가 '{status}'입니다. 사용자를 위한 짧은 한국어 한 문장의 인삿말을 만들어줘."}
+    ]
 )
-message = response.text
+message = response.choices[0].message.content
 
 ==================================================
 2) 기능 요구사항
@@ -38,7 +40,7 @@ message = response.text
    - 편 손가락 0개 (주먹 ✊) → OFF
    - 편 손가락 5개 (손바닥 ✋) → ON
    - 편 손가락 2개 (V자 ✌️) → MOOD
-5. light_status 가 바뀔 때만 Gemini 인삿말을 생성한다.
+5. light_status 가 바뀔 때만 gpt-4o-mini 인삿말을 생성한다.
 6. 손 랜드마크를 영상에 그린다.
 7. PIL + malgun.ttf 로 한글 표시
    - "조명 상태: ON/OFF/MOOD"
@@ -61,12 +63,12 @@ Flask 라우트
 ==================================================
 app.py
 templates/index.html
-requirements.txt   (flask, python-dotenv, google-genai, opencv-python, mediapipe, numpy, pillow)
+requirements.txt   (flask, python-dotenv, openai, opencv-python, mediapipe, numpy, pillow)
 README.md
 
 ==================================================
 5) 제약
 ==================================================
 - debug=False, port=5000
-- Gemini 예외 시 last_message에 오류 문구, 스트리밍은 유지
+- gpt-4o-mini 예외 시 last_message에 오류 문구, 스트리밍은 유지
 - 완성된 실행 가능한 코드만 작성하고, 지금 바로 전체 파일을 생성하라.
