@@ -1,11 +1,11 @@
-[Stremlit 웹 챗봇 제작 실습 질의문]
+[Streamlit 웹 챗봇 제작 실습 질의문]
 
-프로젝트 폴더명 : Stremlit_Web_Chatbot
+프로젝트 폴더명 : Streamlit_Web_Chatbot
 
 
-- Stremlit Web Chatbot  만들기 질의문
+- Streamlit Web Chatbot  만들기 질의문
 
-Stremlit을 사용해서 간단한 웹 챗봇 서버를 만들어줘.
+Streamlit을 사용해서 간단한 웹 챗봇 서버를 만들어줘.
 조건은 다음과 같아 :
 1. 현재 경로에서 채팅 UI(입력창, 버튼, 채팅창 영역)를 보여준다.
 2. OpenAI API 최신 버전 스타일 코드로 만들어주고 모델도 "gpt-4o-mini'를 사용하도록 해줘. 
